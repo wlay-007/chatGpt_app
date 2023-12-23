@@ -22,55 +22,60 @@ export default function Home() {
     ]);
     setUserInput('')
 
-    const chatComplition = await openai.chat.completions.create({
+    const chatCompletion = await openai.chat.completions.create({
       messages: [...chatHistory, {role: 'assistant', content: userInput}],
       model: "gpt-3.5-turbo",
     });
 
     setChatHistory((prevState) => [
       ...prevState,
-      { role: 'assistant', content: chatComplition.choices[0].message.content || '' },
+      { role: 'assistant', content: chatCompletion.choices[0].message.content || '' },
     ]);
     setIsLoading(false);
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>)=>{
+    if (e.key === 'Enter' && userInput){
+      handleUserInput();
+    }
+  }
+
 
   return (
-      <div className="bg-gray-100 min-h-screen flex flex-col items-center justify-center">
-        <div className="w-full h-screen max-w-screen-md p-4 flex-1 flex-col flex items-center justify-center">
-          <div className="mb-4">
-            <div className="text-4xl font-bold text-blue-600 mb-2">
-              Чатбот-помощник
-            </div>
+      <div className="min-h-screen bg-gray-100">
+        <div className="grid grid-rows-[100px,1fr,100px] h-screen md:w-[600px] m-auto sm:w-full">
+          <div className=" flex justify-center items-center">
+              <div className="md:text-4xl text-2xl font-bold text-blue-500 mb-2">
+                Чатбот-помощник
+              </div>
           </div>
-          <div className="overflow-auto mb-4 py-4">
+          {chatHistory.length ? (<div className="overflow-auto py-4 max-h-[calc(100vh-200px)]">
             {chatHistory.map((item: { role: 'assistant' | 'user'; content: string }, index: number) => (
-                <div key={index} className={`${item.role === 'user' ? 'text-right' : 'text-left'} mb-4`}>
-                  <div className={`rounded-full p-2 max-w-md mx-4 inline-block ${item.role === 'user' ? 'bg-blue-300 text-blue-600' : 'bg-green-300 text-green-600'}`}>
+                <div key={index} className={`${item.role === 'user' ? 'w-full flex flex-row-reverse items-center justify-start' : 'flex flex-row items-center justify-start'} mb-2`}>
+                  <div className={`rounded-full min-w-10 min-h-10 mx-1 flex justify-center items-center  ${item.role === 'user' ? 'bg-blue-300 text-blue-600' : 'bg-green-300 text-green-600'}`}>
                     {item.role === 'user' ? 'H' : 'A'}
                   </div>
-                  <div className={`p-2 max-w-md inline-block my-2 mx-4 ${item.role === 'user' ? 'bg-blue-300 text-blue-600' : 'bg-green-300 text-green-600'}`}>{item.content}</div>
+                  <div className={`p-2 max-w-md rounded-md my-1 mx-2 ${item.role === 'user' ? 'bg-blue-300 text-blue-600' : 'bg-green-300 text-green-600'}`}>{item.content}</div>
                 </div>
             ))}
-          </div>
-          <div className="flex">
+          </div>): <h1 className="text-center text-gray-400 self-center">Начните диалог</h1>}
+          <div className="flex items-center justify-center p-2">
             <input
+                onKeyDown={handleKeyDown}
                 type="text"
                 placeholder="Введите запрос"
                 value={userInput}
                 onChange={(e) => setUserInput(e.target.value)}
-                className='flex-1 p-2 rounded-l-lg outline-none'
+                className='flex-1 p-2 rounded-l-lg outline-none h-10'
             />
             <button
-                className={`p-2 px-6 flex items-center justify-center rounded-r-lg bg-blue-500 text-white ${!userInput ? 'pointer-events-none' : ""}`}
+                className={`p-2 px-4 h-10 w-10 flex items-center justify-center rounded-r-lg bg-blue-500 text-white ${!userInput ? 'pointer-events-none' : ""} ${isLoading ? 'pointer-events-none' : ""}`}
                 onClick={handleUserInput}
             >
-              {isLoading ? (<Spin indicator={<LoadingOutlined style={{ fontSize: 24, color: "white" }} spin />} />) : '>'}
+              {isLoading ? (<Spin indicator={<LoadingOutlined style={{ fontSize: "13px", color: "white"}} spin />} />) : '>'}
             </button>
           </div>
-
         </div>
       </div>
-
   )
 }
