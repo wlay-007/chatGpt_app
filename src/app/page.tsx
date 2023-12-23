@@ -42,8 +42,8 @@ export default function Home() {
 
 
   return (
-      <div className="min-h-screen bg-gray-100">
-        <div className="grid grid-rows-[100px,1fr,100px] h-screen md:w-[600px] m-auto sm:w-full">
+      <div className="min-h-dvh bg-gray-100">
+        <div className="grid grid-rows-[100px,1fr,100px] h-dvh md:w-[600px] m-auto sm:w-full">
           <div className=" flex justify-center items-center">
               <div className="md:text-4xl text-2xl font-bold text-blue-500 mb-2">
                 Чатбот-помощник
